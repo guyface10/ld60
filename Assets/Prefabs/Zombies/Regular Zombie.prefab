@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e3a1803e34f3bb3ae104d336939f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Zombie
-  speed: 2.2
+  speed: 2
   health: 3
   damage: 2
   separationAmount: 1.875
