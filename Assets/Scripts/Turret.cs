@@ -16,5 +16,11 @@ public class Turret : MonoBehaviour
     public void Fire()
     {
         animator.Play(shootAnimationName);
+
+        ParticleSystem[] particleSystems = GetComponentsInChildren<ParticleSystem>();
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            particleSystems[i].Play();
+        }
     }
 }

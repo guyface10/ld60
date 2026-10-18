@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using NUnit.Framework;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +11,15 @@ public class Player : MonoBehaviour
     #region Movement
 
     [SerializeField]
+    private float health;
+    private float initialHealth;
+    [SerializeField]
+    private Healthbar healthbar;
+    [SerializeField]
+    private float healthPickupAmount;
+
+    [Space]
+    [SerializeField]
     private float speed;
 
     [SerializeField]
@@ -23,6 +31,11 @@ public class Player : MonoBehaviour
     private bool dashing;
     private float dashTimer;
     private float dashCooldownTimer;
+
+    [Space]
+    [SerializeField]
+    private float knockbackDuration;
+    private float knockbackTimer;
 
     private Rigidbody2D rb2d;
     private Vector2 movement;
@@ -64,6 +77,37 @@ public class Player : MonoBehaviour
     private Computer computer;
     private bool isNearComputer;
 
+    #region Combat
+
+    [Space]
+    [SerializeField]
+    private float swingArc = 120;
+    [SerializeField]
+    private float swingDuration = 0.15f;
+    [SerializeField]
+    private float hitboxPadding = 0.1f;
+
+    private bool swinging;
+    private float swingTimer;
+    private float attackCooldownTimer;
+    private Weapon swingWeapon;
+    private readonly System.Collections.Generic.HashSet<Zombie> hitZombies = new();
+
+    #endregion
+
+    [Space]
+    [SerializeField]
+    private GameObject bobExplosion;
+
+    [Space]
+    [SerializeField]
+    private float showLoseScreenDelay = 3f;
+    [SerializeField]
+    private float showWinScreenDelay = 5f;
+    private UIManager uiManager;
+
+    public bool Won { get; private set; }
+
     void Awake()
     {
         inputActions = new PlayerActions();
@@ -79,10 +123,18 @@ public class Player : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
+
+        healthbar.maxValue = health;
+        initialHealth = health;
+
+        uiManager = FindAnyObjectByType<UIManager>();
     }
 
     void Update()
     {
+        if (health <= 0)
+            return;
+
         if (dashing)
         {
             dashTimer -= Time.deltaTime;
@@ -99,6 +151,7 @@ public class Player : MonoBehaviour
         movement = inputActions.Movement.Walk.ReadValue<Vector2>();
 
         AimHeldItem();
+        UpdateSwing();
 
         if (isNearComputer && Inventory[InventoryIndex]?.Type == ItemData.ItemType.PART)
         {
@@ -107,6 +160,12 @@ public class Player : MonoBehaviour
             worldItems[InventoryIndex] = null;
             Inventory[InventoryIndex] = null;
             UpdateHeldItemSprite();
+
+            if (computer.Fixed)
+            {
+                StartCoroutine(ShowWinScreen());
+                Won = true;
+            }
         }
     }
 
@@ -121,7 +180,7 @@ public class Player : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         heldItemTransform.localPosition = direction * heldItemRadius;
-        heldItemTransform.localRotation = Quaternion.Euler(0, 0, angle);
+        heldItemTransform.localRotation = Quaternion.Euler(0, 0, angle + GetSwingAngleOffset(angle));
 
         if (angle >= 90 || angle <= -90)
         {
@@ -135,16 +194,41 @@ public class Player : MonoBehaviour
         }
 
         crosshairTransform.position = new Vector3(mouseWorld.x, mouseWorld.y, crosshairTransform.position.z);
+
+        knockbackTimer -= Time.deltaTime;
     }
 
     void FixedUpdate()
     {
-        rb2d.linearVelocity = movement * speed;
+        if (knockbackTimer <= 0)
+            rb2d.linearVelocity = movement * speed;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (health <= 0)
+            return;
 
+        Zombie zombie = collision.collider.GetComponent<Zombie>();
+        if (zombie != null)
+        {
+            Vector3 dir = collision.transform.position - transform.position;
+            rb2d.linearVelocity = -dir.normalized * zombie.knockback;
+            knockbackTimer = knockbackDuration;
+            health -= zombie.damage;
+            healthbar.Value = health;
+            // TODO: make player invulnerable and flash
+            
+            if (health <= 0)
+            {
+                GameObject newBobExplosion = Instantiate(bobExplosion);
+                newBobExplosion.transform.position = transform.position;
+                newBobExplosion.GetComponent<BobExplosion>().Explode();
+                spriteRenderer.enabled = false;
+                heldItemSpriteRenderer.enabled = false;
+                StartCoroutine(ShowLoseScreen());
+            }
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -179,6 +263,19 @@ public class Player : MonoBehaviour
         }
     }
 
+    private IEnumerator ShowLoseScreen()
+    {
+        yield return new WaitForSeconds(showLoseScreenDelay);
+        uiManager.ShowLoseScreen();
+        gameObject.SetActive(false);
+    }
+
+    private IEnumerator ShowWinScreen()
+    {
+        yield return new WaitForSeconds(showWinScreenDelay);
+        uiManager.ShowWinScreen();
+    }
+
     private void OnDash()
     {
         if (dashCooldownTimer > 0)
@@ -189,10 +286,84 @@ public class Player : MonoBehaviour
         dashing = true;
     }
 
+    private float GetSwingAngleOffset(float aimAngle)
+    {
+        if (!swinging)
+            return 0;
+
+        float t = 1 - (swingTimer / swingDuration);
+        float offset = Mathf.Lerp(swingArc / 2, -swingArc / 2, t);
+        bool facingLeft = aimAngle >= 90 || aimAngle <= -90;
+        return facingLeft ? -offset : offset;
+    }
+
+    private void OnAttack()
+    {
+        if (health <= 0)
+            return;
+
+        if (swinging || attackCooldownTimer > 0)
+            return;
+
+        Weapon weapon = worldItems[InventoryIndex]?.GetComponent<Weapon>();
+        if (weapon == null || weapon.WeaponData.Type != WeaponData.WeaponType.MELEE)
+            return;
+
+        swingWeapon = weapon;
+        swinging = true;
+        swingTimer = swingDuration;
+        attackCooldownTimer = weapon.WeaponData.AttackSpeed > 0 ? 1 / weapon.WeaponData.AttackSpeed : swingDuration;
+        hitZombies.Clear();
+    }
+
+    private void UpdateSwing()
+    {
+        attackCooldownTimer -= Time.deltaTime;
+
+        if (!swinging)
+            return;
+
+        DamageZombiesInHitbox();
+
+        swingTimer -= Time.deltaTime;
+        if (swingTimer <= 0)
+            swinging = false;
+    }
+
+    private void DamageZombiesInHitbox()
+    {
+        if (heldItemSpriteRenderer.sprite == null)
+            return;
+
+        Bounds bounds = heldItemSpriteRenderer.sprite.bounds;
+        Vector2 center = heldItemTransform.TransformPoint(bounds.center);
+        Vector2 size = Vector2.Scale(bounds.size, heldItemTransform.lossyScale) + Vector2.one * hitboxPadding;
+
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, heldItemTransform.eulerAngles.z);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Zombie zombie = hits[i].GetComponentInParent<Zombie>();
+            if (zombie == null || !hitZombies.Add(zombie))
+                continue;
+
+            Vector2 direction = ((Vector2)(zombie.transform.position - transform.position)).normalized;
+            zombie.TakeDamage(swingWeapon.WeaponData.Damage, direction * swingWeapon.WeaponData.Knockback);
+        }
+    }
+
     private void OnPickup()
     {
         if (itemToPickup == null)
             return;
+
+        if (itemToPickup.itemData.Id == "health")
+        {
+            health += healthPickupAmount;
+            health = Mathf.Clamp(health, 0, initialHealth);
+            itemToPickup.gameObject.SetActive(false);
+            healthbar.Value = health;
+            return;
+        }
 
         if (Inventory[InventoryIndex] != null)
         {
@@ -212,6 +383,7 @@ public class Player : MonoBehaviour
     private void OnSwitchItem()
     {
         IsPrimarySelected = !IsPrimarySelected;
+        swinging = false;
         UpdateHeldItemSprite();
     }
 
@@ -233,6 +405,7 @@ public class Player : MonoBehaviour
         inputActions.Movement.Dash.performed += _ => OnDash();
         inputActions.Interactions.Pickup.performed += _ => OnPickup();
         inputActions.Interactions.SwitchItem.performed += _ => OnSwitchItem();
+        inputActions.Combat.Attack.performed += _ => OnAttack();
     }
 
     void OnDisable()
@@ -242,5 +415,6 @@ public class Player : MonoBehaviour
         inputActions.Movement.Dash.performed -= _ => OnDash();
         inputActions.Interactions.Pickup.performed -= _ => OnPickup();
         inputActions.Interactions.SwitchItem.performed -= _ => OnSwitchItem();
+        inputActions.Combat.Attack.performed -= _ => OnAttack();
     }
 }

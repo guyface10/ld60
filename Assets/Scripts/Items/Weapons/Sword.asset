@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   <Type>k__BackingField: 0
-  <Damage>k__BackingField: 2
-  <AttackSpeed>k__BackingField: 0
-  <Knockback>k__BackingField: 5
+  <Damage>k__BackingField: 3
+  <AttackSpeed>k__BackingField: 1.5
+  <Knockback>k__BackingField: 15

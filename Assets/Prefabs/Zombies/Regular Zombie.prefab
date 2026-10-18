@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2993004244695857796}
   - component: {fileID: 1668047428138971380}
   - component: {fileID: 3827134901056187351}
+  - component: {fileID: -1914259329008679481}
   m_Layer: 8
   m_Name: Regular Zombie
   m_TagString: Untagged
@@ -47,11 +48,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e3a1803e34f3bb3ae104d336939f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Zombie
-  speed: 2
+  speed: 2.5
   health: 3
   damage: 2
+  knockback: 8
   separationAmount: 1.875
   separationForce: 0.3125
+  bloodEffectPrefab: {fileID: 8982392606425887104, guid: b00227932f67bfb69b885e1d13882206, type: 3}
+  deathEffectPrefab: {fileID: 8655604301711976618, guid: f201e4c82f1b8a7e1a032d773509cf62, type: 3}
+  knockbackDuration: 0.15
 --- !u!212 &2993004244695857796
 SpriteRenderer:
   serializedVersion: 3
@@ -149,7 +154,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: e9b4d35ba365827a9b34515aa7d74a85, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -185,3 +190,15 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.249, y: 0.561}
   m_EdgeRadius: 0
+--- !u!114 &-1914259329008679481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6845511305018588150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 572fb935d909b18ba8c3e48b76ffd1aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteSorter

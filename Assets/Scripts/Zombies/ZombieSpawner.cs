@@ -18,18 +18,25 @@ public class ZombieSpawner : MonoBehaviour
     private float numZombiesIncreaseAmount; 
     [SerializeField]
     private float maxZombiesPerWave;
+    [SerializeField]
+    private float wonTimeBtwWaves = 1.5f;
 
     private float waveSpawnTimer;
 
     private Transform[] spawnPoints;
+    private Player player;
 
     void Awake()
     {
         spawnPoints = GetComponentsInChildren<Transform>();
+        player = FindAnyObjectByType<Player>();
     }
 
     void Update()
     {
+        if (player != null && player.Won)
+            timeBtwWaves = wonTimeBtwWaves;
+
         waveSpawnTimer += Time.deltaTime;
         if (waveSpawnTimer >= timeBtwWaves)
             SpawnNextWave();
