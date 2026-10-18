@@ -2433,7 +2433,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZombieSpawner
   zombieSpawns:
   - <ZombiePrefab>k__BackingField: {fileID: 3203832719828148264, guid: 09a1a9e8995459719956b9ef6bdd1b3c, type: 3}
-    <Amount>k__BackingField: 3
+    <Amount>k__BackingField: 2
     <Likelihood>k__BackingField: 2
   - <ZombiePrefab>k__BackingField: {fileID: 6845511305018588150, guid: 902f9001e7c6c8462ab99ed69c2c8744, type: 3}
     <Amount>k__BackingField: 1
@@ -2443,10 +2443,10 @@ MonoBehaviour:
     <Likelihood>k__BackingField: 0.7
   timeBtwWaves: 7
   btwTimeDecreaseAmount: 0.15
-  minTimeBtwWaves: 1
+  minTimeBtwWaves: 2
   numZombiesPerWave: 2
   numZombiesIncreaseAmount: 0.2
-  maxZombiesPerWave: 9
+  maxZombiesPerWave: 8
   wonTimeBtwWaves: 1.5
 --- !u!1 &743780701
 GameObject:
@@ -37209,7 +37209,7 @@ MonoBehaviour:
   health: 10
   healthbar: {fileID: 1514948962}
   healthPickupAmount: 3
-  speed: 3
+  speed: 4
   dashSpeedMultiplier: 4
   dashDuration: 0.12
   dashCooldown: 0.5
