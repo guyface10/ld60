@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ae3d5ee5c4c7083b0aeabe9995f862, type: 3}
+  m_Name: Test Item
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  <Id>k__BackingField: test_item
+  <Type>k__BackingField: 0
+  <DisplayName>k__BackingField: Test Item
+  <Sprite>k__BackingField: {fileID: 21300000, guid: 39f4f93f2694ba0c8b97c815c70252d0, type: 3}
+  <Weight>k__BackingField: 1

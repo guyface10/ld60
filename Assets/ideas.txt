@@ -1,0 +1,75 @@
+
+ █████                      █████                               ██████████                                    ████████     █████   
+░░███                      ░░███                               ░░███░░░░███                                  ███░░░░███  ███░░░███ 
+ ░███        █████ ████  ███████  █████ ████ █████████████      ░███   ░░███  ██████   ████████   ██████    ░███   ░░░  ███   ░░███
+ ░███       ░░███ ░███  ███░░███ ░░███ ░███ ░░███░░███░░███     ░███    ░███ ░░░░░███ ░░███░░███ ███░░███   ░█████████ ░███    ░███
+ ░███        ░███ ░███ ░███ ░███  ░███ ░███  ░███ ░███ ░███     ░███    ░███  ███████  ░███ ░░░ ░███████    ░███░░░░███░███    ░███
+ ░███      █ ░███ ░███ ░███ ░███  ░███ ░███  ░███ ░███ ░███     ░███    ███  ███░░███  ░███     ░███░░░     ░███   ░███░░███   ███ 
+ ███████████ ░░████████░░████████ ░░████████ █████░███ █████    ██████████  ░░████████ █████    ░░██████    ░░████████  ░░░█████░  
+░░░░░░░░░░░   ░░░░░░░░  ░░░░░░░░   ░░░░░░░░ ░░░░░ ░░░ ░░░░░    ░░░░░░░░░░    ░░░░░░░░ ░░░░░      ░░░░░░      ░░░░░░░░     ░░░░░░   
+
+
+
+Theme: Old Tech
+
+
+Knights
+
+
+Fighting with clubs and stones and spears
+    - slingshot
+
+
+Propeller plane
+    - Red Barron
+
+
+Muskets
+
+
+Magic?
+    - might be stretching it...
+
+
+WWII
+
+
+Building shelter w/ old tech
+
+
+Remake of Limited Survival but with old tech ;)
+    - bows, battle axes, battle hammers, swords
+    - maybe some spells?
+    - play as a knight
+
+    - or zombie apocalypse
+
+    - medieval zombie apocalypse
+
+
+FINAL IDEA: MEDIEVAL ZOMBIE APOCALYPSE
+
+Weapons:
+    - Bow
+    - Crossbow?
+    - Sword
+    - Magic staff (would behave like a gun)
+        * slows enemies when it hits them
+
+Baddies
+    - Small Zombie
+        * small, fast
+        * health: 1
+        * low damage
+        * spawn in pairs
+    - Regular Zombie
+        * bigger than small zombie, slower
+        * health: 3
+    - Big Zombie
+        * bigger than regular zombie, slower
+        * health: 6
+    - Mega Zombie
+        * much larger than a big zombie, much slower
+        * health: 12
+        * splash damage?
+
